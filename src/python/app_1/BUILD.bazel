@@ -1,0 +1,10 @@
+load("@pypi//:requirements.bzl", "requirement")
+
+py_binary(
+    name = 'app_1',
+    srcs = ['app_1.py'],
+    deps = [
+        '//lib_x',
+        requirement('argparse')
+    ],
+)

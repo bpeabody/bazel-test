@@ -1,0 +1,7 @@
+py_binary(
+    name = 'app_2',
+    srcs = ['app_2.py'],
+    deps = [
+        '//lib_y'
+    ],
+)

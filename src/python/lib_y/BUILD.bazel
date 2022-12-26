@@ -1,0 +1,17 @@
+load("@pypi//:requirements.bzl", "requirement")
+
+py_library(
+    name = 'lib_y',
+    deps = [
+        requirement('numpy'),
+    ],
+    srcs = ['num_some.py'],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = 'test_num_some',
+    srcs = ['test_num_some.py'],
+    deps = [':lib_y'],
+    main = 'test_num_some.py',
+)

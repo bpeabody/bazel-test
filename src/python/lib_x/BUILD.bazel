@@ -1,0 +1,12 @@
+py_library(
+    name = 'lib_x',
+    srcs = ['x_util.py'],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = 'test_x_util',
+    srcs = ['test_x_util.py'],
+    deps = [':lib_x'],
+    main = 'test_x_util.py',
+)

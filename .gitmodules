@@ -1,0 +1,3 @@
+[submodule "tools/rules_python"]
+	path = tools/rules_python
+	url = https://github.com/bazelbuild/rules_python.git
