@@ -5,7 +5,10 @@ py_library(
     deps = [
         requirement('numpy'),
     ],
-    srcs = ['num_some.py'],
+    srcs = [
+        'num_some.py',
+        'more_fun.py'
+    ],
     visibility = ["//visibility:public"],
 )
 
