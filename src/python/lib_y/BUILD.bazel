@@ -4,6 +4,7 @@ py_library(
     name = 'lib_y',
     deps = [
         requirement('numpy'),
+        requirement('rdflib')
     ],
     srcs = [
         'num_some.py',
