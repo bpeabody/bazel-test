@@ -1,3 +1,3 @@
-from foo import bar
+from mo.foo import bar
 
 bar()

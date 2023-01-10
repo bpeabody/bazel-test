@@ -1,8 +1,8 @@
 genrule(
     name = 'foo',
     srcs = [ 'bar.py' ],
-    outs = [ 'foo.py' ],
-    cmd_bash = '$(location bin/doit.sh) $(location bar.py) $(location foo.py)',
+    outs = [ 'mo/foo.py'],
+    cmd_bash = '$(location bin/doit.sh) $(location bar.py) $(RULEDIR)/mo',
     message = "well well",
     tools = [
         'bin/doit.sh'
@@ -13,7 +13,7 @@ py_binary(
     name = 'test',
     srcs = [
         'test.py',
-        'foo.py',
+        'mo/foo.py',
     ],
     deps = [
     ]
