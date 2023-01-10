@@ -34,8 +34,8 @@ genrule(
   ],
 )
 
-py_binary(
-    name = 'test',
+py_library(
+    name = 'test_lib',
     srcs = [
         'openapi_server/typing_utils.py',
         'openapi_server/test/test_developers_controller.py',
@@ -59,9 +59,26 @@ py_binary(
         'openapi_server/controllers/default_controller.py',
         'openapi_server/controllers/security_controller_.py',
         'openapi_server/controllers/developers_controller.py',
-        'test.py',
-        #'mo/foo.py',
+        'foo.py',
     ],
     deps = [
+    ]
+)
+
+py_test(
+    name = 'test_foo',
+    srcs = [
+        'test_foo.py',
+    ],
+    deps = [ ':test_lib' ],
+)
+
+py_binary(
+    name = 'test',
+    srcs = [
+        'test.py',
+    ],
+    deps = [
+        ':test_lib',
     ]
 )
