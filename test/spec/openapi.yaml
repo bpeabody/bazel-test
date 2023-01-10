@@ -1,0 +1,878 @@
+openapi: 3.0.0
+info:
+  title: Foundation - Document Search API
+  description: This is Document Search API Documentation
+  version: "1.1.0"
+  contact:
+    name: "Epistemic AI"
+    email: "info@epistemic.ai"
+paths:
+  /api/document_search/health:
+    get:
+      tags:
+        - developers
+      summary: Check the health of the service
+      description: Checks if all preliminary condition of the service is fulfilled. Checks the overall availability of the service.
+      operationId: document_search_health
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/health
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+
+  /api/document_search/ch8915:
+    get:
+      tags:
+        - developers
+      summary: Downloads publications from given URIs.
+      description: Downloads publications from given URIs as a zip file.
+      operationId: getCh8915
+      parameters:
+        - name: publications
+          in: query
+          description: List of Publication types to download.
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+            default: []
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+      security:
+        - sigv4: []
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/ch8915
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+
+  /api/document_search/download_publications:
+    post:
+      tags:
+        - developers
+      summary: Starts a job to download publications from given URIs.
+      description: Starts job to download publication from given set of URIs.
+      operationId: startDownloadPublications
+      requestBody:
+        description: Publications to download
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartDownloadPublicationsPayload"
+      responses:
+        201:
+          description: "Started download publication received"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/StartDownloadPublicationsResponse"
+      security:
+        - sigv4: []
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/download_publications
+        responses:
+          default:
+            statusCode: "201"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    get:
+      tags:
+        - developers
+      summary: Get download publications job output.
+      description: Get download publications job output.
+      operationId: getDownloadPublications
+      parameters:
+        - name: task_id
+          in: query
+          description: ID of the job to get the output of
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: "Get download publication status"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/GetDownloadPublicationsResponseInProgress"
+        200:
+          description: "Get download publication status"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/GetDownloadPublicationsResponseCompleted"
+      security:
+        - sigv4: []
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/download_publications
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+
+  /api/document_search/documents:
+    post:
+      tags:
+        - developers
+      summary: Return a list of documents.
+      operationId: getDocumentSearchList
+      description: The list of documents relevant to the query and knowledge map.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentsPayload"
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentsResponse"
+      security:
+        - sigv4: []
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/documents
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+
+  /api/document_search/filter_options:
+    get:
+      tags:
+        - developers
+      summary: Return all possible document filter options.
+      operationId: getFilterOptions
+      parameters:
+        - name: features
+          in: query
+          description: List of enabled feature toggles.
+          required: false
+          schema:
+            type: string
+      description: Get all possible document filters available for selection.
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilterOptions"
+      security:
+        - sigv4: []
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/filter_options
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+
+  /api/document_search/sort_options:
+    get:
+      tags:
+        - developers
+      summary: Return all possible sort options.
+      operationId: getSortOptions
+      description: Get all possible sort options available for selection.
+      responses:
+        "200":
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SortOptions"
+      security:
+        - sigv4: []
+      x-openapi-router-controller: document_search.api
+      x-amazon-apigateway-integration:
+        uri: http://document-search.${stageVariables.stageName}.${stageVariables.clusterDomain}/api/document_search/sort_options
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "GET"
+        type: http_proxy
+        connectionType: VPC_LINK
+        connectionId: "${stageVariables.vpcLink}"
+    options:
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
+              schema:
+                type: "string"
+            Access-Control-Allow-Headers:
+              schema:
+                type: "string"
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+
+components:
+  schemas:
+    Health:
+      type: object
+      properties:
+        status:
+          type: boolean
+        version:
+          type: string
+        rg_requirements_s3:
+          type: string
+        ds_requirements_s3:
+          type: string
+        literature_index:
+          type: string
+        clinicaltrial_index:
+          type: string
+        patent_index:
+          type: string
+      required:
+        - status
+        - version
+      example:
+        status: true
+        version: "0.11.0"
+
+    StartDownloadPublicationsPayload:
+      type: object
+      properties:
+        publications:
+          type: array
+          items:
+            type: string
+      required:
+        - publications
+
+    StartDownloadPublicationsResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+      required:
+        - task_id
+
+    GetDownloadPublicationsResponseInProgress:
+      type: object
+      properties:
+        error_messages:
+          type: array
+          items:
+            type: string
+
+    GetDownloadPublicationsResponseCompleted:
+      type: object
+      properties:
+        file_url:
+          type: string
+        error_messages:
+          type: array
+          items:
+            type: string
+      required:
+        - file_url
+
+    DocumentsResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Documents"
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+      required:
+        - status
+        - message
+        - data
+        - metadata
+
+    DocumentsPayload:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          description: Input text query for document search.
+          type: string
+        page:
+          description: Results page to display.
+          type: integer
+        publications:
+          type: array
+          items:
+            type: string
+          default: []
+        clinicaltrials:
+          description: List of Clinical Trial types to return.
+          type: array
+          items:
+            type: string
+          default: []
+        patents:
+          description: List of Patent types to return.
+          type: array
+          items:
+            type: string
+          default: []
+        sc15872:
+          description: Feature flag to enable Patents
+          type: boolean
+          default: False
+        locations:
+          description: List of location filters.
+          type: array
+          items:
+            type: string
+          default: []
+        sort:
+          description: Sort documents by this option.
+          type: string
+        overall_statuses:
+          description: List of overall status filters.
+          type: array
+          items:
+            type: string
+          default: []
+        sort_order:
+          description: Direction of sorting.
+          type: string
+          enum:
+            - asc
+            - desc
+          default: desc
+        knowledge_map:
+          description: List of entities in knowledge map.
+          type: array
+          items:
+            type: string
+          default: []
+        pinned_entities:
+          description: List of entities pinned by user.
+          type: array
+          items:
+            type: string
+          default: []
+        from_date:
+          description: Earliest permitted date for searchable documents.
+          type: string
+          format: date
+        to_date:
+          description: Latest permitted date for searchable documents.
+          type: string
+          format: date
+
+    Metadata:
+      type: object
+      properties:
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+      required:
+        - pagination
+
+    Pagination:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Total number of results.
+        per_page:
+          type: integer
+          description: Number of results to display per page.
+        current_page:
+          type: integer
+          description: Current results page displayed.
+        total_pages:
+          type: integer
+          description: Total number of results pages.
+      required:
+        - count
+        - per_page
+        - current_page
+        - total_pages
+
+    Documents:
+      type: array
+      description: List of Documents.
+      items:
+        $ref: "#/components/schemas/Document"
+
+    Document:
+      type: object
+      description: A Document (publication, clinical trial, patent etc.).
+      properties:
+        uri:
+          type: string
+          description: Uniform Resource Identifier of the document.
+        entity_details:
+          description: Additional information associated with the entity for knowledge map display purposes.
+          $ref: "#/components/schemas/Resource"
+        score:
+          type: number
+          description: Relevance score for the document.
+        title:
+          type: string
+          description: Title of the document.
+        abstract_text:
+          type: string
+          description: Abstract of the document.
+        pmid:
+          type: string
+          description: PubMed id of the publication.
+        pmcid:
+          type: string
+          description: PubMed Central id of the publication.
+        doi:
+          type: string
+          description: Digital Object Identifier of the publication.
+        arxiv:
+          type: string
+          description: arXiv id of the publication.
+        cit_cnt:
+          type: integer
+          description: Citation counts of the publication.
+        summary:
+          type: string
+          description: One-line summary of the publication abstract.
+        publication_date:
+          type: string
+          description: Publication date of the publication (YYYY-MM-DD, with possible missing date components).
+        publication_year:
+          type: integer
+          description: Publication year of the publication.
+        publication_types:
+          type: array
+          description: Publication types associated with the publication.
+          items:
+            type: string
+        journal:
+          type: string
+          description: Journal of the publication.
+        authors:
+          type: array
+          description: Authors of the publication.
+          items:
+            type: string
+        nct_id: # Start of clinical trial fields.
+          type: string
+          description: NCT id of the clinical trial.
+        description:
+          type: string
+          description: Long description of the clinical trial.
+        last_updated:
+          type: string
+          description: Last update date of the clinical trial (YYYY-MM-DD).
+        purpose:
+          type: string
+          description: Primary purpose of the clinical trial.
+        phase:
+          type: string
+          description: Phase(s) of the clinical trial.
+        overall_status:
+          type: string
+          description: Overall status of the clinical trial.
+        status:
+          type: string
+          description: Status of the clinical trial or patent.
+        stop_reason:
+          type: string
+          description: Stop reason (if stopped) of the clinical trial.
+        study_type:
+          type: string
+          description: Study type of the clinical trial.
+        countries:
+          type: array
+          description: Locations (as countries) of the clinical trial.
+          items:
+            type: string
+        investigators:
+          type: array
+          description: Investigators of the clinical trial.
+          items:
+            type: string
+        lead_sponsor:
+          type: string
+          description: Lead sponsor of the clinical trial.
+        interventions:
+          type: array
+          description: Interventions of the clinical trial.
+          items:
+            type: string
+        keywords:
+          type: array
+          description: Keywords associated with the clinical trial.
+          items:
+            type: string
+        conditions:
+          type: array
+          description: Conditions of the clinical trial.
+          items:
+            type: string
+        references:
+          type: array
+          description: Refers to the literature referenced by the clinical trial.
+          items:
+            $ref: "#/components/schemas/Resource"
+        publications:
+          type: array
+          description: Refers to literature resulting from the clinical trial.
+          items:
+            $ref: "#/components/schemas/Resource"
+        patent_number: # Start of patent fields
+          type: string
+          description: Patent number.
+        assignee:
+          type: string
+          description: Assignee of the patent.
+        claims:
+          type: array
+          description: Claims of the patent.
+          items:
+            type: string
+        inventors:
+          type: array
+          description: Inventors' names of the patent.
+          items:
+            type: string
+        priority_date:
+          type: string
+          description: Priority date.
+        filed_date:
+          type: string
+          description: Filed date.
+        granted_date:
+          type: string
+          description: Granted date.
+        published_date:
+          type: string
+          description: Published date.
+
+      required:
+        - uri
+        - entity_details
+        - title
+
+    Resource:
+      type: object
+      description: Linkable resource.
+      properties:
+        key:
+          type: string
+          description: Key of the resource.
+        label:
+          type: string
+          description: Label of the resource.
+        link_text:
+          type: string
+          description: Text that is hyperlinked.
+        link:
+          type: string
+          description: External link of the resource.
+      required:
+        - key
+        - label
+        - link
+
+    FilterOptions:
+      type: array
+      description: List of document filter options.
+      items:
+        $ref: "#/components/schemas/FilterOption"
+
+    SortOptions:
+      type: array
+      description: List of document sort options.
+      items:
+        $ref: "#/components/schemas/OptionItem"
+      example:
+        - key: relevance
+          label: Relevance
+        - key: date
+          label: Date
+        - key: citation
+          label: Citation counts
+
+    FilterOption:
+      type: object
+      description: Type of filter and its suboptions.
+      properties:
+        key:
+          type: string
+          description: Key of the filter option.
+          enum:
+            - publications
+            - clinicaltrials
+            - patents
+        label:
+          type: string
+          description: Display label of the filter option.
+        suboptions:
+          type: array
+          description: Nested suboptions of the filter option.
+          items:
+            $ref: "#/components/schemas/OptionItem"
+      required:
+        - key
+        - label
+        - suboptions
+      example:
+        key: publications
+        label: Publications
+        suboptions:
+          - key: reviews
+            label: Reviews
+          - key: clinical
+            label: Clinical
+
+    OptionItem:
+      type: object
+      description: Key and label of an option.
+      properties:
+        key:
+          type: string
+          description: Key of the option item.
+        label:
+          type: string
+          description: Display label of the option item.
+      required:
+        - key
+        - label
+  securitySchemes:
+    sigv4:
+      type: "apiKey"
+      name: "Authorization"
+      in: "header"
+      x-amazon-apigateway-authtype: "awsSigv4"
+x-amazon-apigateway-gateway-responses:
+  DEFAULT_4XX:
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"
+  DEFAULT_5XX:
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Request-ID,X-User-ID,X-Session-ID'"

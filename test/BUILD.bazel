@@ -20,6 +20,7 @@ genrule(
   cmd = '$(location bin/openapi-generate) $(RULEDIR)/codegen $(location spec/openapi.yaml)',
   tools = [
       'bin/openapi-generate',
+      'bin/openapi-generator-cli-5.3.1.jar',
   ],
 )
 
