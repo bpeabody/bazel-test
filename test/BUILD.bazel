@@ -2,7 +2,7 @@ genrule(
     name = 'foo',
     srcs = [ 'bar.py' ],
     outs = [ 'foo.py' ],
-    cmd_bash = '$(location doit.sh)',
+    cmd_bash = '$(location doit.sh) $(location bar.py) $(location foo.py)',
     message = "well well",
     tools = [
         'doit.sh'

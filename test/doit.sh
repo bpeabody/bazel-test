@@ -1,1 +1,1 @@
-cp bar.py foo.py
+cp $1 $2
