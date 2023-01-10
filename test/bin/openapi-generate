@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# This script creates the codegen directory using OpenAPI generator
+# 
+# The following optional options are available:
+#   output_dir: where to output the generated code
+#   spec: path to specification file
+#
+
+set -euo pipefail
+
+declare output_dir=${1:-"./codegen"}
+declare spec=${2:-"./spec/openapi.yaml"}
+
+echo "$output_dir and $spec" > $output_dir/moo.py
+
+cd "$(dirname "$0")/.."
+
+mkdir -p var/bin
+
+declare openapi_version=5.3.1
+
+# Download openapi generator if it doesn't exist in var/bin
+if [ ! -f "var/bin/openapi-generator-cli-${openapi_version}.jar" ]
+then
+    curl https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/${openapi_version}/openapi-generator-cli-${openapi_version}.jar \
+        --output var/bin/openapi-generator-cli-${openapi_version}.jar
+fi
+
+# Genereate openapi generator if output dir is empty
+if [ -d "$output_dir" ] && [ -n "$(ls -A "$output_dir")" ]
+then
+    echo "$output_dir dir already exists with content"
+else
+    java -jar ./var/bin/openapi-generator-cli-${openapi_version}.jar \
+        generate -g python-flask \
+        -i $spec \
+        -o "$output_dir"
+fi

@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Setup the required environment to run the `document_search` service. Must be
+# run from the directory of the service.
+
+set -eu
+
+# Parse input options. Only -d for dev-mode is supported now.
+dev=false
+while getopts 'd' opt; do
+    case $opt in
+        d) dev=true ;;
+        *) echo 'Error in command line parsing' >&2
+            exit 1
+    esac
+done
+
+# Create (force) a new virtual environment for this service.
+cmd_path=$(realpath $(dirname $0))
+cd "$cmd_path/.."
+env_dir=.venv
+rm -rf $env_dir
+python3 -m venv $env_dir
+
+# Install dependencies in the environment.
+. $env_dir/bin/activate
+
+# First, install the `eai` dependencies.
+pip install --upgrade pip wheel
+pip install 'awscli>=1'
+pip install -r eai-requirements.txt
+if "$dev"; then
+    echo "Installing dependencies for dev environment"
+    pip install -U --force-reinstall --no-deps -e ./codegen
+    pip install -U --force-reinstall --no-deps -e $(git rev-parse --show-toplevel)/src/eai-datamodel/eai-source-manager
+    pip install -U --force-reinstall --no-deps -e $(git rev-parse --show-toplevel)/src/eai-base
+    pip install -U --force-reinstall --no-deps -e $(git rev-parse --show-toplevel)/src/eai-datamodel/eai-query
+    pip install -U --force-reinstall --no-deps -e $(git rev-parse --show-toplevel)/src/eai-datamodel/eai-elasticsearch
+    pip install -U --force-reinstall --no-deps -e $(git rev-parse --show-toplevel)/src/eai-datamodel/eai-kg
+fi
+
+# Download internally distributed code artifacts from S3.
+pip install git+ssh://git@github.com/epistemic-ai/eai-artifact
+eai-artifact pull
+
+pip install .
+pip install -r requirements.txt
+
+# Create the version file required by the healthcheck endpoint
+: "${EAI_VERSION:=local}"
+echo $EAI_VERSION > .eai_version.txt

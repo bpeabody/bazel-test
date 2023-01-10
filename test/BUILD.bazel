@@ -1,19 +1,35 @@
+#genrule(
+#    name = 'foo',
+#    srcs = [ 'bar.py' ],
+#    outs = [ 'mo/foo.py'],
+#    cmd_bash = '$(location bin/doit.sh) $(location bar.py) $(RULEDIR)/mo',
+#    tools = [
+#        'bin/doit.sh'
+#    ],
+#)
+
 genrule(
-    name = 'foo',
-    srcs = [ 'bar.py' ],
-    outs = [ 'mo/foo.py'],
-    cmd_bash = '$(location bin/doit.sh) $(location bar.py) $(RULEDIR)/mo',
-    message = "well well",
-    tools = [
-        'bin/doit.sh'
-    ],
+  name = 'openapi_server',
+  srcs = [
+      'spec/openapi.yaml',
+  ],
+  outs = [
+    'codegen/moo.py'
+ #   'codegen/openapi_server/models/document.py',
+  ],
+  cmd = '$(location bin/openapi-generate) $(RULEDIR)/codegen $(location spec/openapi.yaml)',
+  tools = [
+      'bin/openapi-generate',
+  ],
 )
 
 py_binary(
     name = 'test',
     srcs = [
+        'codegen/moo.py',
+        #'codegen/openaapi_server/models/document.py',
         'test.py',
-        'mo/foo.py',
+        #'mo/foo.py',
     ],
     deps = [
     ]
