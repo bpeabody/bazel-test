@@ -1,3 +1,3 @@
-from codegen.openapi_server.models import document
+from openapi_server.models import document
 
 print('hey')

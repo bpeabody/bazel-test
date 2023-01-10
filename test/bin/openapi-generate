@@ -14,12 +14,9 @@ declare temp_out=$output_dir/__openapicodegen
 declare spec=$2
 declare cli_jar=$3
 
-echo "$output_dir and $spec a $cli_jar t $temp_out" > $temp_out/moo.py
-
 java -jar $cli_jar \
     generate -g python-flask \
     -i $spec \
     -o $temp_out
 
-
-mv $temp_out/openapi_server $output_dir
+cp -R $temp_out/openapi_server $output_dir
