@@ -9,20 +9,17 @@
 
 set -euo pipefail
 
-declare output_dir=${1:-"./codegen"}
-declare spec=${2:-"./spec/openapi.yaml"}
+declare output_dir=$1
+declare temp_out=$output_dir/__openapicodegen
+declare spec=$2
+declare cli_jar=$3
 
-echo "$output_dir and $spec" > $output_dir/moo.py
+echo "$output_dir and $spec a $cli_jar t $temp_out" > $temp_out/moo.py
 
-cd "$(dirname "$0")/.."
+java -jar $cli_jar \
+    generate -g python-flask \
+    -i $spec \
+    -o $temp_out
 
-# Genereate openapi generator if output dir is empty
-if [ -d "$output_dir" ] && [ -n "$(ls -A "$output_dir")" ]
-then
-    echo "$output_dir dir already exists with content"
-else
-    java -jar ./openapi-generator-cli-5.3.1.jar \
-        generate -g python-flask \
-        -i $spec \
-        -o "$output_dir"
-fi
+
+mv $temp_out/openapi_server $output_dir

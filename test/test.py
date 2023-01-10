@@ -1,3 +1,3 @@
-from mo.foo import bar
+from codegen.openapi_server.models import document
 
-bar()
+print('hey')
