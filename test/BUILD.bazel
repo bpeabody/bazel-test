@@ -2,8 +2,11 @@ genrule(
     name = 'foo',
     srcs = [ 'bar.py' ],
     outs = [ 'foo.py' ],
-    cmd_bash = 'cp $(location bar.py) $(location foo.py)',
-    message = "well well"
+    cmd_bash = '$(location doit.sh)',
+    message = "well well",
+    tools = [
+        'doit.sh'
+    ],
 )
 
 py_binary(
