@@ -13,6 +13,7 @@ declare output_dir=$1
 declare temp_out=$output_dir/__openapicodegen
 declare spec=$2
 declare cli_jar=$3
+declare prefix=$4
 
 java -jar $cli_jar \
     generate -g python-flask \
@@ -21,4 +22,4 @@ java -jar $cli_jar \
 
 cp -R $temp_out/openapi_server/ $output_dir/
 
-find $output_dir -type f -exec sed -i -e 's/from openapi_server/from test_spec/g' {} \;
+find $output_dir -type f -exec sed -i -e "s/from openapi_server/from $4/g" {} \;

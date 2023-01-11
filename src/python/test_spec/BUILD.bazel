@@ -27,7 +27,7 @@ genrule(
     'controllers/security_controller_.py',
     'controllers/developers_controller.py',
   ],
-  cmd = '$(location bin/openapi-generate) $(RULEDIR) $(location spec/openapi.yaml) $(location bin/openapi-generator-cli-5.3.1.jar)',
+  cmd = '$(location bin/openapi-generate) $(RULEDIR) $(location spec/openapi.yaml) $(location bin/openapi-generator-cli-5.3.1.jar) test_spec',
   tools = [
       'bin/openapi-generate',
       'bin/openapi-generator-cli-5.3.1.jar',
