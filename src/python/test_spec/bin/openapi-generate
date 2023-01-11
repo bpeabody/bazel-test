@@ -19,4 +19,6 @@ java -jar $cli_jar \
     -i $spec \
     -o $temp_out
 
-cp -R $temp_out/openapi_server $output_dir
+cp -R $temp_out/openapi_server/ $output_dir/
+
+find $output_dir -type f -exec sed -i -e 's/from openapi_server/from test_spec/g' {} \;
