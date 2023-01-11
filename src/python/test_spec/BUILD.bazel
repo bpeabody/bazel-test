@@ -35,7 +35,7 @@ genrule(
 )
 
 py_library(
-    name = 'test_lib',
+    name = 'test_spec',
     srcs = [
         'openapi_server/typing_utils.py',
         'openapi_server/test/test_developers_controller.py',
@@ -59,26 +59,8 @@ py_library(
         'openapi_server/controllers/default_controller.py',
         'openapi_server/controllers/security_controller_.py',
         'openapi_server/controllers/developers_controller.py',
-        'foo.py',
     ],
     deps = [
-    ]
-)
-
-py_test(
-    name = 'test_foo',
-    srcs = [
-        'test_foo.py',
     ],
-    deps = [ ':test_lib' ],
-)
-
-py_binary(
-    name = 'test',
-    srcs = [
-        'test.py',
-    ],
-    deps = [
-        ':test_lib',
-    ]
+    visibility = ["//visibility:public"],
 )
